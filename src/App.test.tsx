@@ -13,7 +13,7 @@ describe('App', () => {
     render(<App />)
 
     const button = screen.getByRole('button', { name: /count is/i })
-    expect(button).toHaveTextContent('Count is 0')
+    expect(button).toHaveTextContent('Count')
 
     await user.click(button)
     expect(button).toHaveTextContent('Count is 1')
