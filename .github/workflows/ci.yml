@@ -19,3 +19,28 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+
+      - name: Install Vercel CLI
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
